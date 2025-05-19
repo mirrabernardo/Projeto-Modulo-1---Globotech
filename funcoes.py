@@ -1,21 +1,21 @@
 # Lista dos tipos de interação que indicam consumo de vídeo
 tipos_visualizacao = ['view_start', 'play']
-
+"""
+Limpa e trata uma linha do CSV:
+- Remove espaços extras dos campos de texto 'plataforma' e 'tipo_interacao'.
+- Converte o campo 'watch_duration_seconds' para float ou None, conforme as regras:
+    * Se o tipo de interação for de visualização, valores ausentes/vazios/não numéricos viram 0.
+    * Para outros tipos de interação, valores ausentes/vazios/não numéricos viram None.
+- Remove qualquer chave None do dicionário (caso tenha sido criada por erro de leitura).
+"""
 def tratar_linha(linha):
-    """
-    Limpa e trata uma linha do CSV:
-    - Remove espaços extras dos campos de texto 'plataforma' e 'tipo_interacao'.
-    - Converte o campo 'watch_duration_seconds' para float ou None, conforme as regras:
-        * Se o tipo de interação for de visualização, valores ausentes/vazios/não numéricos viram 0.
-        * Para outros tipos de interação, valores ausentes/vazios/não numéricos viram None.
-    - Remove qualquer chave None do dicionário (caso tenha sido criada por erro de leitura).
-    """
     plataforma = linha.get('plataforma', '').strip()
     tipo_interacao = linha.get('tipo_interacao', '').strip()
     valor = linha.get('watch_duration_seconds', None)
     tipo_lower = tipo_interacao.lower()
 
     if tipo_lower in tipos_visualizacao: # Para interações de visualização, valores ausentes/vazios/não numéricos viram 0
+        valor = linha.get('watch_duration_seconds', None)
         if valor is None or valor.strip() == '':
             watch_duration = 0
         else:
@@ -23,14 +23,9 @@ def tratar_linha(linha):
                 watch_duration = float(valor.strip())
             except (ValueError, TypeError):
                 watch_duration = 0
-    else: # Para outros tipos de interação, valores ausentes/vazios/não numéricos viram None
-        if valor is None or valor.strip() == '':
-            watch_duration = None
-        else:
-            try:
-                watch_duration = float(valor.strip())
-            except (ValueError, TypeError):
-                watch_duration = None
+    else: # Para qualquer tipo que não seja visualização, sempre atribui 'não aplicável'
+        watch_duration = 'não aplicável'
+        
 
     linha['plataforma'] = plataforma
     linha['tipo_interacao'] = tipo_interacao
