@@ -26,13 +26,13 @@ Não é necessário rodar `pip install` ou qualquer outro gerenciador de pacotes
 
 ## Solicitações do Projeto
 
-### Parte 1 
+### Parte 1 - Validação e Limpeza dos Dados 
 *em atualização*
 
-### Parte 2 
+### Parte 2 - Estruturação dos Dados
 *em atualização*
 
-### Parte 3 
+### Parte 3 - Cálculo de Métricas Simples
 *em atualização*
 
 
