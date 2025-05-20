@@ -1,14 +1,22 @@
-# Lista dos tipos de interação que indicam consumo de vídeo
-tipos_visualizacao = ['view_start', 'play']
+import csv
+# Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames).
+def carregar_dados_csv(caminho_arquivo):
+    with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
+        reader = csv.DictReader(arquivo)
+        linhas = list(reader)
+        fieldnames = reader.fieldnames
+    return linhas, fieldnames
+
 """
 Limpa e trata uma linha do CSV:
 - Remove espaços extras dos campos de texto 'plataforma' e 'tipo_interacao'.
 - Converte o campo 'watch_duration_seconds' para float ou None, conforme as regras:
     * Se o tipo de interação for de visualização, valores ausentes/vazios/não numéricos viram 0.
-    * Para outros tipos de interação, valores ausentes/vazios/não numéricos viram None.
+    * Para outros tipos de interação, valores ausentes/vazios/não numéricos viram 'não aplicável'.
 - Remove qualquer chave None do dicionário (caso tenha sido criada por erro de leitura).
 """
 def tratar_linha(linha):
+    tipos_visualizacao = ['view_start', 'play'] # Lista dos tipos de interação que indicam consumo de vídeo
     plataforma = linha.get('plataforma', '').strip()
     tipo_interacao = linha.get('tipo_interacao', '').strip()
     valor = linha.get('watch_duration_seconds', None)
@@ -26,7 +34,6 @@ def tratar_linha(linha):
     else: # Para qualquer tipo que não seja visualização, sempre atribui 'não aplicável'
         watch_duration = 'não aplicável'
         
-
     linha['plataforma'] = plataforma
     linha['tipo_interacao'] = tipo_interacao
     linha['watch_duration_seconds'] = watch_duration
