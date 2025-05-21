@@ -1,3 +1,6 @@
+import os
+os.system('csl' if os.name == 'nt' else 'clear')
+
 from funcoes import tratar_linha, carregar_dados_csv, agrupar_por_conteudo, linha_valida
 from collections import defaultdict
 
@@ -23,16 +26,21 @@ for linha in linhas:
 """
 Para cada id_conteudo (e seu respectivo nome_conteudo), calcular o número total de interações dos tipos 'like', 'share', 'comment'.
 """
-interacoes_por_conteudo = defaultdict(int)
+interacoes_por_conteudo = defaultdict(lambda: {'nome_conteudo': '', 'total': 0})
 
 for linha in linhas:
     if linha_valida(linha):  # Usa função já existente
         conteudo_id = linha.get('id_conteudo')
+        conteudo_nome = linha.get('nome_conteudo')
         if conteudo_id:
-            interacoes_por_conteudo[conteudo_id] += 1
+            interacoes_por_conteudo[conteudo_id]['nome_conteudo'] = conteudo_nome
+            interacoes_por_conteudo[conteudo_id]['total'] += 1
 
 resultado = dict(interacoes_por_conteudo)
-print(resultado)
+
+# Exibe de forma legível
+for id_conteudo, info in resultado.items(): 
+    print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Total de interações: {info['total']}")
 
 
 # Cálculo de Métricas 2 - Contagem por Tipo de Interação para Cada Conteúdo
@@ -41,10 +49,12 @@ Para cada id_conteudo (e nome_conteudo), contar quantas vezes cada tipo_interaca
 """
 
 
+
 # Cálculo de Métricas 3 - Tempo Total de Visualização por Conteúdo
 """
 Para cada id_conteudo (e nome_conteudo), calcular a soma total de watch_duration_seconds.
 """
+
 
 
 # Cálculo de Métricas 4 - Média de Tempo de Visualização por Conteúdo
@@ -63,13 +73,16 @@ for id_conteudo, info in conteudos.items():
         media = 0
     print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Média de tempo de visualização: {media:.2f} segundos")
 
+
 # Cálculo de Métricas 5 - Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
 """
 Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organizada) todos os comment_text associados a ele.
 """
 
 
+
 # Cálculo de Métricas 6 - Listagem dos top-5 conteúdos com mais visualizações)
 """
 Criar uma função que retorne (ou imprima de forma organizada) os top-5 conteúdos com mais visualizações.
 """
+

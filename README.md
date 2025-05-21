@@ -32,13 +32,15 @@ Foi solicitado no projeto que, após o carregamento inicial dos dados para a mem
 - **Tratamento de `watch_duration_seconds`:**
   - Identificar valores ausentes ou vazios nesta coluna.
   - Caso o campo `tipo_interacao` indique consumo de vídeo (por exemplo, `view_start`), converter valores ausentes ou vazios para 0.
-  - Para tipos de interação que não envolvem visualização (como `like`, `share`, `comment`), o campo foi tratado como `"não aplicável"`, diferenciando de visualizações reais.
+  - Para tipos de interação que não envolvem visualização (como `like`, `share`, `comment`), o campo foi tratado como `None`, diferenciando de visualizações reais.
+  - **Justificativa:**  
+    Optou-se por utilizar o valor `None` para indicar ausência de duração, pois isso facilita o tratamento dos dados e evita erros nos cálculos de soma e média. Se fosse utilizado um valor como `"não aplicável"` (string), operações matemáticas resultariam em erro, já que não é possível somar ou dividir strings com números. Com `None`, é possível filtrar facilmente apenas os valores numéricos durante os cálculos.
   - Converter a coluna `watch_duration_seconds` para um tipo numérico adequado (float) quando aplicável.
 - **Limpeza de Campos de Texto:**
   - Remover espaços em branco desnecessários no início e no fim de campos como `plataforma` e `tipo_interacao`.
 - **Tratamento de Exceções:**
   - Implementar tratamento básico de exceções (blocos try-except) durante as conversões de tipo e outras operações de limpeza, evitando que o script seja interrompido por dados inesperados.
-
+  
 ---
 
 ### Parte 2 - Estruturação dos Dados

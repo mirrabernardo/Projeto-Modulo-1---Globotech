@@ -1,4 +1,5 @@
 import csv
+from collections import defaultdict
 
 # FUNÇÃO 1 -  CARREGAR CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
 def carregar_dados_csv(caminho_arquivo):
@@ -7,7 +8,6 @@ def carregar_dados_csv(caminho_arquivo):
         linhas = list(reader)
         fieldnames = reader.fieldnames
     return linhas, fieldnames
-from collections import defaultdict
 
 
 # FUNÇÃO 2 - Tratamento (Limpa e trata linha do CSV)
