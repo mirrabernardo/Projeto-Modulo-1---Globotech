@@ -25,19 +25,22 @@ def tratar_linha(linha):
 
     if tipo_lower in tipos_visualizacao: # Para interações de visualização, valores ausentes/vazios/não numéricos viram 0
         valor = linha.get('watch_duration_seconds', None)
-        if valor is None or valor.strip() == '':
-            watch_duration = 0
-        else:
-            try:
-                watch_duration = float(valor.strip())
-            except (ValueError, TypeError):
+        try:
+            if valor is None or valor.strip() == '':
                 watch_duration = 0
+            else:
+                watch_duration = float(valor.strip())
+        except (ValueError, TypeError): # Se não for possível converter para float, atribui 0
+            watch_duration = 0
+        finally: # Garante que o campo será atualizado, independentemente de erro ou não
+            linha['watch_duration_seconds'] = watch_duration
     else: # Para qualquer tipo que não seja visualização, sempre atribui None
         watch_duration = None
-        
+        linha['watch_duration_seconds'] = watch_duration
+
+    # Remove espaços extras dos campos de texto
     linha['plataforma'] = plataforma
     linha['tipo_interacao'] = tipo_interacao
-    linha['watch_duration_seconds'] = watch_duration
 
     # Remove qualquer chave None que possa ter sido criada por erro de leitura do CSV
     if None in linha:
