@@ -6,6 +6,18 @@ def carregar_dados_csv(caminho_arquivo):
         linhas = list(reader)
         fieldnames = reader.fieldnames
     return linhas, fieldnames
+from collections import defaultdict
+
+def calcular_interacoes_por_conteudo(linhas):
+    interacoes_por_conteudo = defaultdict(int)
+
+    for linha in linhas:
+        if linha_valida(linha):  # Usa sua função já existente
+            conteudo_id = linha.get('id_conteudo')
+            if conteudo_id:
+                interacoes_por_conteudo[conteudo_id] += 1
+
+    return dict(interacoes_por_conteudo)
 
 """
 Limpa e trata uma linha do CSV:
