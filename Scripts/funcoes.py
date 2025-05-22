@@ -1,7 +1,7 @@
 import csv
 from collections import defaultdict
 
-# FUNÇÃO 1 -  CARREGAR CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
+# FUNÇÃO 0 -  Carregar CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
 def carregar_dados_csv(caminho_arquivo):
     with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
         reader = csv.DictReader(arquivo)
@@ -10,8 +10,25 @@ def carregar_dados_csv(caminho_arquivo):
     return linhas, fieldnames
 
 
+# =========================
+# VALIDAÇÃO E LIMPEZA DOS DADOS (ITEM 3.2)
+# =========================
 
-# FUNÇÃO 2 - Tratamento (Limpa e trata linha do CSV)
+# FUNÇÃO 1.1 - Tratar e salvar CSV (Carrega, trata e salva o CSV tratado)
+def tratar_e_salvar_csv(input_path, output_path, fieldnames):
+    linhas, _ = carregar_dados_csv(input_path)
+    linhas_filtradas = filter(linha_valida, linhas)
+    linhas_tratadas = map(tratar_linha, linhas_filtradas)
+
+    with open(output_path, 'w', encoding='utf-8', newline='') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for linha in linhas_tratadas:
+            linha_limpa = limpar_none_keys(linha, fieldnames)
+            writer.writerow(linha_limpa)
+
+
+# FUNÇÃO 1.2 - Tratamento (Limpa e trata linha do CSV)
 """
 - Remove espaços extras dos campos de texto 'plataforma' e 'tipo_interacao'.
 - Converte o campo 'watch_duration_seconds' para float ou None, conforme as regras: (Se o tipo de interação for de visualização, valores ausentes/vazios/não numéricos viram 0; Para outros tipos de interação, valores ausentes/vazios/não numéricos viram None)
@@ -49,7 +66,7 @@ def tratar_linha(linha):
     return linha
 
 
-# FUNÇÃO 3 - Validação (Verifica se a linha é válida para processamento)
+# FUNÇÃO 1.3 - Validação (Verifica se a linha é válida para processamento)
 """
 Uma linha é considerada válida se os campos 'plataforma' e 'tipo_interacao'
 não estão vazios após a remoção de espaços extras.
@@ -58,7 +75,7 @@ def linha_valida(linha):
     return linha.get('plataforma', '').strip() != '' and linha.get('tipo_interacao', '').strip() != ''
 
 
-# FUNÇÃO 4 - Limpeza de chaves inválidas
+# FUNÇÃO 1.4 - Limpeza de chaves inválidas
 """
 Remove do dicionário qualquer chave que seja None ou que não esteja em fieldnames.
 Isso garante que apenas as colunas corretas serão escritas no CSV final.
@@ -67,7 +84,11 @@ def limpar_none_keys(linha, fieldnames):
     return {k: v for k, v in linha.items() if k in fieldnames and k is not None}
 
 
-# FUNÇÃO 5 - Estruturação (agrupa as interações por id_conteudo)
+# =========================
+# ESTRUTURAÇÃO DOS DADOS (ITEM 3.3)
+# =========================
+
+# FUNÇÃO 2.1 - Estruturação (agrupa as interações por id_conteudo)
 def agrupar_por_conteudo(linhas, fieldnames):
     conteudos = {}
     for linha in linhas:
@@ -83,7 +104,11 @@ def agrupar_por_conteudo(linhas, fieldnames):
     return conteudos
 
 
-# FUNÇÃO 6 - Cálculo de Métricas (Total de Interações por Conteúdo)
+# =========================
+# CÁLCULO DE MÉTRICAS SIMPLES (ITEM 3.4)
+# =========================
+
+# FUNÇÃO 3.1 - Cálculo de Métricas (Total de Interações por Conteúdo)
 """
 Para cada id_conteudo (e seu respectivo nome_conteudo), calcula o número total de interações dos tipos 'like', 'share', 'comment'.)
 
@@ -110,8 +135,7 @@ def calcular_interacoes_por_conteudo(linhas):
     return dict(interacoes_por_conteudo)
 
 
-
-# FUNÇÃO 7 - Cálculo de Métricas (Contagem por Tipo de Interação para Cada Conteúdo)
+# FUNÇÃO 3.2 - Cálculo de Métricas (Contagem por Tipo de Interação para Cada Conteúdo)
 """
 Para cada id_conteudo (e nome_conteudo), contar quantas vezes cada tipo_interacao ocorreu (ex: Conteúdo X teve 50 'likes', 10 'shares', 5 'comments').
 """
@@ -133,17 +157,18 @@ def contar_tipos_interacao_por_conteudo(dados):
                 resultado[id_conteudo]['interacoes'][tipo] = 1
     return resultado
 
-# FUNÇÃO 8 - Cálculo de Métricas (Tempo Total de Visualização por Conteúdo)
+
+# FUNÇÃO 3.3 - Cálculo de Métricas (Tempo Total de Visualização por Conteúdo)
 """
 Para cada id_conteudo (e nome_conteudo), calcular a soma total de watch_duration_seconds.
 """
 
 
-# FUNÇÃO 9 - Cálculo de Métricas (Média de Tempo de Visualização por Conteúdo)
+
+# FUNÇÃO 3.4 - Cálculo de Métricas (Média de Tempo de Visualização por Conteúdo)
 """
 Para cada id_conteudo (e nome_conteudo), calcular a média de watch_duration_seconds. Atenção: Considerar apenas as interações onde watch_duration_seconds for maior que 0 para este cálculo.
 """
-
 def calcular_media_visualizacao_por_conteudo(conteudos):
     medias = {}
     for id_conteudo, info in conteudos.items():
@@ -164,8 +189,7 @@ def calcular_media_visualizacao_por_conteudo(conteudos):
     return medias
 
 
-
-# FUNÇÃO 10 - Cálculo de Métricas (Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
+# FUNÇÃO 3.5 - Cálculo de Métricas (Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
 """
 Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organizada) todos os comment_text associados a ele.
 """
@@ -178,7 +202,8 @@ def listar_comentarios_por_conteudo(conteudos, id_conteudo):
                 comentarios.append(interacao.get('comment_text'))
     return comentarios
 
-# FUNÇÃO 11 - Cálculo de Métricas (Listagem dos top-5 conteúdos com mais visualizações)
+
+# FUNÇÃO 3.6 - Cálculo de Métricas (Listagem dos top-5 conteúdos com mais visualizações)
 """
 Criar uma função que retorne (ou imprima de forma organizada) os top-5 conteúdos com mais visualizações.
 """

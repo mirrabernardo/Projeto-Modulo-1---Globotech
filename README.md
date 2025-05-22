@@ -19,14 +19,15 @@ Não é necessário rodar `pip install` ou qualquer outro gerenciador de pacotes
 
 ## Estrutura do Repositório
 
--   `Scripts/`: Contém os scripts em Python main, tratamento e funções.
--   `Arquivos/`: Contém os arquivos de dados resultantes dos scripts.
--   `Docs/`: Contém os arquivos de texto, incluindo o relatório final.
--   `README.md`: Este arquivo de documentação.
+- `Scripts/`: Scripts Python (`main.py`, `funcoes.py`)
+- `Arquivos/`: Arquivos de dados de entrada e saída (CSV).
+- `Docs/`: Relatórios e documentação complementar.
+- `README.md`: Este arquivo de documentação.
 
 ## Solicitações do Projeto
 
 ### Parte 1 - Validação e Limpeza dos Dados 
+
 Foi solicitado no projeto que, após o carregamento inicial dos dados para a memória (em uma lista de dicionários, onde cada dicionário representa uma linha do CSV), fossem desenvolvidas funções em Python para:
 
 - **Tratamento de `watch_duration_seconds`:**
@@ -41,9 +42,8 @@ Foi solicitado no projeto que, após o carregamento inicial dos dados para a mem
 - **Tratamento de Exceções:**
   - Implementar tratamento básico de exceções (blocos try-except) durante as conversões de tipo e outras operações de limpeza, evitando que o script seja interrompido por dados inesperados.
 
----
-
 ### Parte 2 - Estruturação dos Dados
+
 Foi solicitado no projeto que, após a limpeza, os dados processados fossem armazenados em uma estrutura de dados Python que facilitasse consultas e cálculos de métricas.
 
 - **Estrutura escolhida:**  
@@ -55,8 +55,6 @@ Foi solicitado no projeto que, após a limpeza, os dados processados fossem arma
 
 >**Justificativa:**  
 Essa estrutura foi considerada adequada por permitir acesso rápido e eficiente às interações de cada conteúdo, facilitando o cálculo de métricas e a geração de relatórios por conteúdo.
-
----
 
 ### Parte 3 - Cálculo de Métricas Simples
 Foi solicitado no projeto o desenvolvimento de funções para calcular as seguintes métricas de engajamento:
@@ -78,8 +76,6 @@ Foi solicitado no projeto o desenvolvimento de funções para calcular as seguin
 
 - **Top-5 conteúdos com mais visualizações:**  
   Função que retorna ou imprime os cinco conteúdos com maior número de visualizações.
-
----
 
 ## Autores
 

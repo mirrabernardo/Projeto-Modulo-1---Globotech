@@ -1,10 +1,15 @@
 import os
 os.system('cls' if os.name == 'nt' else 'clear')
 
-from funcoes import tratar_linha, carregar_dados_csv, agrupar_por_conteudo, linha_valida, calcular_interacoes_por_conteudo, calcular_media_visualizacao_por_conteudo, top_5_conteudos_mais_vistos, listar_comentarios_por_conteudo, contar_tipos_interacao_por_conteudo
+from funcoes import carregar_dados_csv, tratar_e_salvar_csv, agrupar_por_conteudo, tratar_linha, calcular_interacoes_por_conteudo, contar_tipos_interacao_por_conteudo, calcular_media_visualizacao_por_conteudo, listar_comentarios_por_conteudo, top_5_conteudos_mais_vistos
 
+# Carrega os nomes das colunas do arquivo original
+_, fieldnames = carregar_dados_csv('./Arquivos/interacoes_globo.csv')
 
-print("Arquivo tratado salvo como interacoes_globo_tratado.csv")
+# Trata e salva o arquivo tratado
+tratar_e_salvar_csv('./Arquivos/interacoes_globo.csv','./Arquivos/interacoes_globo_tratado.csv',fieldnames)
+
+print("Arquivo tratado salvo como interacoes_globo_tratado.csv\n")
 
 linhas, fieldnames = carregar_dados_csv('./Arquivos/interacoes_globo_tratado.csv')
 linhas_tratadas = [tratar_linha(linha) for linha in linhas]
