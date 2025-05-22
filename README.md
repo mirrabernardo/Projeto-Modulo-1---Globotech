@@ -21,7 +21,6 @@ Não é necessário rodar `pip install` ou qualquer outro gerenciador de pacotes
 
 - `Scripts/`: Scripts Python (`main.py`, `funcoes.py`)
 - `Arquivos/`: Arquivos de dados de entrada e saída (CSV).
-- `Docs/`: Relatórios e documentação complementar.
 - `README.md`: Este arquivo de documentação.
 
 ## Solicitações do Projeto
