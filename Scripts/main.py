@@ -1,5 +1,5 @@
 import os
-os.system('csl' if os.name == 'nt' else 'clear')
+os.system('cls' if os.name == 'nt' else 'clear')
 
 from funcoes import tratar_linha, carregar_dados_csv, agrupar_por_conteudo, linha_valida, calcular_interacoes_por_conteudo, calcular_media_visualizacao_por_conteudo, top_5_conteudos_mais_vistos, listar_comentarios_por_conteudo, contar_tipos_interacao_por_conteudo
 
@@ -14,7 +14,7 @@ conteudos = agrupar_por_conteudo(linhas_tratadas, fieldnames)
 
 
 # Cálculo de Métricas 1 - Total de Interações por Conteúdo
-resultado1 = dict(calcular_interacoes_por_conteudo(linhas))
+resultado1 = dict(calcular_interacoes_por_conteudo(linhas_tratadas))
 
 print('\nTOTAL DE INTERAÇÕES POR CONTEÚDO:\n')
 for id_conteudo, info in resultado1.items(): 
@@ -32,7 +32,10 @@ for id_conteudo, info in resultado2.items():
 
 
 # Cálculo de Métricas 3 - Tempo Total de Visualização por Conteúdo
-
+"""
+resultado3 = tempo_total_visualizacao_por_conteudo(conteudos)
+print('\nTEMPO TOTAL DE VISUALIZAÇÃO POR CONTEÚDO:\n')
+"""
 
 
 
@@ -58,7 +61,7 @@ for id_conteudo, conteudo in conteudos.items():
 
 
 # Cálculo de Métricas 6 - Listagem dos top-5 conteúdos com mais visualizações)
-resultado6 = top_5_conteudos_mais_vistos(linhas)
+resultado6 = top_5_conteudos_mais_vistos(linhas_tratadas)
 print("\nTOP 5 CONTEÚDOS COM MAIS VISUALIZAÇÕES:\n")
 for i, (id_conteudo, info) in enumerate(resultado6, start=1):
     print(f"{i}. ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Visualizações: {info['total_views']}")
