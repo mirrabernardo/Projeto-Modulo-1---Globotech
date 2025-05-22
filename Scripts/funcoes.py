@@ -10,9 +10,9 @@ def carregar_dados_csv(caminho_arquivo):
     return linhas, fieldnames
 
 
-# =========================
+# ===================================
 # VALIDAÇÃO E LIMPEZA DOS DADOS (ITEM 3.2)
-# =========================
+# ===================================
 
 # FUNÇÃO 1.1 - Tratar e salvar CSV (Carrega, trata e salva o CSV tratado)
 def tratar_e_salvar_csv(input_path, output_path, fieldnames):
@@ -84,9 +84,9 @@ def limpar_none_keys(linha, fieldnames):
     return {k: v for k, v in linha.items() if k in fieldnames and k is not None}
 
 
-# =========================
+# ===================================
 # ESTRUTURAÇÃO DOS DADOS (ITEM 3.3)
-# =========================
+# ===================================
 
 # FUNÇÃO 2.1 - Estruturação (agrupa as interações por id_conteudo)
 def agrupar_por_conteudo(linhas, fieldnames):
@@ -104,23 +104,13 @@ def agrupar_por_conteudo(linhas, fieldnames):
     return conteudos
 
 
-# =========================
+# ===================================
 # CÁLCULO DE MÉTRICAS SIMPLES (ITEM 3.4)
-# =========================
+# ===================================
 
 # FUNÇÃO 3.1 - Cálculo de Métricas (Total de Interações por Conteúdo)
 """
 Para cada id_conteudo (e seu respectivo nome_conteudo), calcula o número total de interações dos tipos 'like', 'share', 'comment'.)
-
-def calcular_interacoes_por_conteudo(linhas):
-    interacoes_por_conteudo = defaultdict(int)
-    for linha in linhas:
-        if linha_valida(linha):  # Usa função já existente
-            conteudo_id = linha.get('id_conteudo')
-            if conteudo_id:
-                interacoes_por_conteudo[conteudo_id] += 1
-
-    return dict(interacoes_por_conteudo)
 """
 def calcular_interacoes_por_conteudo(linhas):
     interacoes_por_conteudo = defaultdict(lambda: {'nome_conteudo': '', 'total': 0})
@@ -133,7 +123,6 @@ def calcular_interacoes_por_conteudo(linhas):
                 interacoes_por_conteudo[conteudo_id]['total'] += 1
 
     return dict(interacoes_por_conteudo)
-
 
 # FUNÇÃO 3.2 - Cálculo de Métricas (Contagem por Tipo de Interação para Cada Conteúdo)
 """
@@ -157,13 +146,22 @@ def contar_tipos_interacao_por_conteudo(dados):
                 resultado[id_conteudo]['interacoes'][tipo] = 1
     return resultado
 
-
 # FUNÇÃO 3.3 - Cálculo de Métricas (Tempo Total de Visualização por Conteúdo)
 """
 Para cada id_conteudo (e nome_conteudo), calcular a soma total de watch_duration_seconds.
 """
-
-
+def contar_tempo_total_de_visualizacao_por_conteudo(linhas):
+    resultado = {}
+    for linha in linhas:
+        id_conteudo = linha['id_conteudo']
+        nome_conteudo = linha['nome_conteudo']
+        tempo = linha.get('watch_duration_seconds')
+        # Só soma se for número e maior que zero
+        if isinstance(tempo, (int, float)) and tempo > 0:
+            if id_conteudo not in resultado:
+                resultado[id_conteudo] = {'nome': nome_conteudo, 'watch_duration_seconds': 0}
+            resultado[id_conteudo]['watch_duration_seconds'] += tempo
+    return resultado
 
 # FUNÇÃO 3.4 - Cálculo de Métricas (Média de Tempo de Visualização por Conteúdo)
 """
@@ -188,7 +186,6 @@ def calcular_media_visualizacao_por_conteudo(conteudos):
         }
     return medias
 
-
 # FUNÇÃO 3.5 - Cálculo de Métricas (Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
 """
 Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organizada) todos os comment_text associados a ele.
@@ -201,7 +198,6 @@ def listar_comentarios_por_conteudo(conteudos, id_conteudo):
             if interacao.get('tipo_interacao') == 'comment':
                 comentarios.append(interacao.get('comment_text'))
     return comentarios
-
 
 # FUNÇÃO 3.6 - Cálculo de Métricas (Listagem dos top-5 conteúdos com mais visualizações)
 """
