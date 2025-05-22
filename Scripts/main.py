@@ -1,88 +1,50 @@
 import os
 os.system('csl' if os.name == 'nt' else 'clear')
 
-from funcoes import tratar_linha, carregar_dados_csv, agrupar_por_conteudo, linha_valida
-from collections import defaultdict
+from funcoes import tratar_linha, carregar_dados_csv, agrupar_por_conteudo, linha_valida, calcular_interacoes_por_conteudo, calcular_media_visualizacao_por_conteudo, top_5_conteudos_mais_vistos, listar_comentarios_por_conteudo
+
+
+print("Arquivo tratado salvo como interacoes_globo_tratado.csv")
 
 linhas, fieldnames = carregar_dados_csv('./Arquivos/interacoes_globo_tratado.csv')
 linhas_tratadas = [tratar_linha(linha) for linha in linhas]
-conteudos = agrupar_por_conteudo(linhas_tratadas, fieldnames)
 
 # Agrupamento de conteudo
-conteudos = {}
-for linha in linhas:
-    id_conteudo = linha['id_conteudo']
-    nome_conteudo = linha['nome_conteudo']
-    interacao = {campo: linha[campo] for campo in fieldnames if campo not in ('id_conteudo', 'nome_conteudo')}
-    if id_conteudo not in conteudos:
-        conteudos[id_conteudo] = {
-            'nome_conteudo': nome_conteudo,
-            'interacoes': []
-        }
-    conteudos[id_conteudo]['interacoes'].append(interacao)
+conteudos = agrupar_por_conteudo(linhas_tratadas, fieldnames)
 
 
 # Cálculo de Métricas 1 - Total de Interações por Conteúdo
-"""
-Para cada id_conteudo (e seu respectivo nome_conteudo), calcular o número total de interações dos tipos 'like', 'share', 'comment'.
-"""
-interacoes_por_conteudo = defaultdict(lambda: {'nome_conteudo': '', 'total': 0})
+resultado1 = dict(calcular_interacoes_por_conteudo(linhas))
 
-for linha in linhas:
-    if linha_valida(linha):  # Usa função já existente
-        conteudo_id = linha.get('id_conteudo')
-        conteudo_nome = linha.get('nome_conteudo')
-        if conteudo_id:
-            interacoes_por_conteudo[conteudo_id]['nome_conteudo'] = conteudo_nome
-            interacoes_por_conteudo[conteudo_id]['total'] += 1
-
-resultado = dict(interacoes_por_conteudo)
-
-# Exibe de forma legível
-for id_conteudo, info in resultado.items(): 
+print('\nTotal de Interações por Conteúdo:')
+for id_conteudo, info in resultado1.items(): 
     print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Total de interações: {info['total']}")
 
 
 # Cálculo de Métricas 2 - Contagem por Tipo de Interação para Cada Conteúdo
-"""
-Para cada id_conteudo (e nome_conteudo), contar quantas vezes cada tipo_interacao ocorreu (ex: Conteúdo X teve 50 'likes', 10 'shares', 5 'comments').
-"""
 
 
 
 # Cálculo de Métricas 3 - Tempo Total de Visualização por Conteúdo
-"""
-Para cada id_conteudo (e nome_conteudo), calcular a soma total de watch_duration_seconds.
-"""
+
 
 
 
 # Cálculo de Métricas 4 - Média de Tempo de Visualização por Conteúdo
-"""
-Para cada id_conteudo (e nome_conteudo), calcular a média de watch_duration_seconds. Atenção: Considerar apenas as interações onde watch_duration_seconds for maior que 0 para este cálculo.
-"""
-for id_conteudo, info in conteudos.items():
-    duracoes = [
-        interacao.get('watch_duration_seconds')
-        for interacao in info['interacoes']
-        if isinstance(interacao.get('watch_duration_seconds'), (int, float)) and interacao.get('watch_duration_seconds') > 0
-    ]
-    if duracoes:
-        media = sum(duracoes) / len(duracoes)
-    else:
-        media = 0
-    print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Média de tempo de visualização: {media:.2f} segundos")
-
+resultado4 = calcular_media_visualizacao_por_conteudo(conteudos)
+print('\nMédia de Tempo de Visualização por Conteúdo')
+for id_conteudo, info in resultado4.items():
+    print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Média de tempo de visualização: {info['media_watch_duration']:.2f} segundos")
 
 # Cálculo de Métricas 5 - Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
-"""
-Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organizada) todos os comment_text associados a ele.
-"""
+resultado5 = listar_comentarios_por_conteudo(conteudos, id_conteudo)
+print("\nTop 5 conteúdos com mais visualizações:\n")
+
 
 
 
 # Cálculo de Métricas 6 - Listagem dos top-5 conteúdos com mais visualizações)
-"""
-Criar uma função que retorne (ou imprima de forma organizada) os top-5 conteúdos com mais visualizações.
-"""
-
+resultado6 = top_5_conteudos_mais_vistos(linhas)
+print("\nTop 5 conteúdos com mais visualizações:\n")
+for i, (id_conteudo, info) in enumerate(resultado6, start=1):
+    print(f"{i}. ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Visualizações: {info['total_views']}")

@@ -10,6 +10,7 @@ def carregar_dados_csv(caminho_arquivo):
     return linhas, fieldnames
 
 
+
 # FUNÇÃO 2 - Tratamento (Limpa e trata linha do CSV)
 """
 - Remove espaços extras dos campos de texto 'plataforma' e 'tipo_interacao'.
@@ -85,7 +86,7 @@ def agrupar_por_conteudo(linhas, fieldnames):
 # FUNÇÃO 6 - Cálculo de Métricas (Total de Interações por Conteúdo)
 """
 Para cada id_conteudo (e seu respectivo nome_conteudo), calcula o número total de interações dos tipos 'like', 'share', 'comment'.)
-"""
+
 def calcular_interacoes_por_conteudo(linhas):
     interacoes_por_conteudo = defaultdict(int)
     for linha in linhas:
@@ -95,6 +96,19 @@ def calcular_interacoes_por_conteudo(linhas):
                 interacoes_por_conteudo[conteudo_id] += 1
 
     return dict(interacoes_por_conteudo)
+"""
+def calcular_interacoes_por_conteudo(linhas):
+    interacoes_por_conteudo = defaultdict(lambda: {'nome_conteudo': '', 'total': 0})
+    for linha in linhas:
+        if linha_valida(linha):  # Usa função já existente
+            conteudo_id = linha.get('id_conteudo')
+            conteudo_nome = linha.get('nome_conteudo')
+            if conteudo_id:
+                interacoes_por_conteudo[conteudo_id]['nome_conteudo'] = conteudo_nome
+                interacoes_por_conteudo[conteudo_id]['total'] += 1
+
+    return dict(interacoes_por_conteudo)
+
 
 
 # FUNÇÃO 7 - Cálculo de Métricas (Contagem por Tipo de Interação para Cada Conteúdo)
@@ -114,14 +128,51 @@ Para cada id_conteudo (e nome_conteudo), calcular a soma total de watch_duration
 Para cada id_conteudo (e nome_conteudo), calcular a média de watch_duration_seconds. Atenção: Considerar apenas as interações onde watch_duration_seconds for maior que 0 para este cálculo.
 """
 
+def calcular_media_visualizacao_por_conteudo(conteudos):
+    medias = {}
+    for id_conteudo, info in conteudos.items():
+        # Filtra apenas durações numéricas e maiores que zero
+        duracoes = [
+            interacao.get('watch_duration_seconds')
+            for interacao in info['interacoes']
+            if isinstance(interacao.get('watch_duration_seconds'), (int, float)) and interacao.get('watch_duration_seconds') > 0
+        ]
+        if duracoes:
+            media = sum(duracoes) / len(duracoes)
+        else:
+            media = 0
+        medias[id_conteudo] = {
+            'nome_conteudo': info['nome_conteudo'],
+            'media_watch_duration': media
+        }
+    return medias
+
+
 
 # FUNÇÃO 10 - Cálculo de Métricas (Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
 """
 Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organizada) todos os comment_text associados a ele.
 """
-
+def listar_comentarios_por_conteudo(conteudos, id_conteudo):
+    comentarios = []
+    for conteudo in conteudos.values():
+        if conteudo['id_conteudo'] == id_conteudo:
+            for interacao in conteudo['interacoes']:
+                if interacao.get('tipo_interacao') == 'comment':
+                    comentarios.append(interacao.get('comment_text'))
+    return comentarios
 
 # FUNÇÃO 11 - Cálculo de Métricas (Listagem dos top-5 conteúdos com mais visualizações)
 """
 Criar uma função que retorne (ou imprima de forma organizada) os top-5 conteúdos com mais visualizações.
 """
+def top_5_conteudos_mais_vistos(linhas):
+    visualizacoes = defaultdict(lambda: {'nome_conteudo': '', 'total_views': 0})
+    for linha in linhas:
+        if linha.get('tipo_interacao') == 'view_start':
+            conteudo_id = linha['id_conteudo']
+            visualizacoes[conteudo_id]['nome_conteudo'] = linha['nome_conteudo']
+            visualizacoes[conteudo_id]['total_views'] += 1
+# Colocar na ordem
+    top_5 = sorted(visualizacoes.items(), key=lambda item: item[1]['total_views'], reverse=True)[:5]
+    return top_5
