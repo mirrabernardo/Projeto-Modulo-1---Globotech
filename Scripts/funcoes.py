@@ -115,7 +115,23 @@ def calcular_interacoes_por_conteudo(linhas):
 """
 Para cada id_conteudo (e nome_conteudo), contar quantas vezes cada tipo_interacao ocorreu (ex: Conteúdo X teve 50 'likes', 10 'shares', 5 'comments').
 """
-
+def contar_tipos_interacao_por_conteudo(dados):
+    resultado = {}
+    for interacao in dados:
+        id_conteudo = interacao.get('id_conteudo')
+        nome_conteudo = interacao.get('nome_conteudo')
+        tipo = interacao.get('tipo_interacao', '').strip().lower()
+        if id_conteudo not in resultado:
+            resultado[id_conteudo] = {
+                'nome_conteudo': nome_conteudo,
+                'interacoes': {}
+            }
+        if tipo:
+            if tipo in resultado[id_conteudo]['interacoes']:
+                resultado[id_conteudo]['interacoes'][tipo] += 1
+            else:
+                resultado[id_conteudo]['interacoes'][tipo] = 1
+    return resultado
 
 # FUNÇÃO 8 - Cálculo de Métricas (Tempo Total de Visualização por Conteúdo)
 """
@@ -155,11 +171,11 @@ Criar uma função que, dado um id_conteudo, retorne (ou imprima de forma organi
 """
 def listar_comentarios_por_conteudo(conteudos, id_conteudo):
     comentarios = []
-    for conteudo in conteudos.values():
-        if conteudo['id_conteudo'] == id_conteudo:
-            for interacao in conteudo['interacoes']:
-                if interacao.get('tipo_interacao') == 'comment':
-                    comentarios.append(interacao.get('comment_text'))
+    conteudo = conteudos.get(id_conteudo)
+    if conteudo:
+        for interacao in conteudo['interacoes']:
+            if interacao.get('tipo_interacao') == 'comment':
+                comentarios.append(interacao.get('comment_text'))
     return comentarios
 
 # FUNÇÃO 11 - Cálculo de Métricas (Listagem dos top-5 conteúdos com mais visualizações)
