@@ -1,12 +1,44 @@
 import csv
+import os
 from collections import defaultdict
 
+def caminho_arquivo(nome_arquivo):
+    # Pasta onde está funcoes.py (ou seja, 'globotech')
+    pasta_atual = os.path.dirname(os.path.abspath(__file__))
+    # Sobe um nível para o diretório principal e entra na pasta 'Arquivos'
+    pasta_arquivos = os.path.join(pasta_atual, '..', 'Arquivos')
+    # Gera o caminho completo para o arquivo
+    caminho = os.path.abspath(os.path.join(pasta_arquivos, nome_arquivo))
+    return caminho
+
+def carregar_dados_csv(caminho_relativo):
+    caminho = caminho_arquivo(caminho_relativo)
+    with open(caminho, 'r', encoding='utf-8') as arquivo:
+        leitor = csv.DictReader(arquivo)
+        linhas = list(leitor)
+        fieldnames = leitor.fieldnames
+    return linhas, fieldnames
+
+def tratar_e_salvar_csv(input_path_relativo, output_path_relativo, fieldnames):
+    linhas, _ = carregar_dados_csv(input_path_relativo)
+    linhas_filtradas = filter(linha_valida, linhas)
+    linhas_tratadas = map(tratar_linha, linhas_filtradas)
+
+    caminho_saida = caminho_arquivo(output_path_relativo)
+    with open(caminho_saida, 'w', encoding='utf-8', newline='') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for linha in linhas_tratadas:
+            linha_limpa = limpar_none_keys(linha, fieldnames)
+            writer.writerow(linha_limpa)
+'''
 # FUNÇÃO 0 -  Carregar CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
-def carregar_dados_csv(caminho_arquivo):
-    with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
-        reader = csv.DictReader(arquivo)
-        linhas = list(reader)
-        fieldnames = reader.fieldnames
+def carregar_dados_csv(caminho_relativo):
+    caminho = caminho_arquivo(caminho_relativo)
+    with open(caminho, 'r', encoding='utf-8') as arquivo:
+        leitor = csv.DictReader(arquivo)
+        linhas = list(leitor)
+        fieldnames = leitor.fieldnames
     return linhas, fieldnames
 
 
@@ -15,8 +47,11 @@ def carregar_dados_csv(caminho_arquivo):
 # ===================================
 
 # FUNÇÃO 1.1 - Tratar e salvar CSV (Carrega, trata e salva o CSV tratado)
-def tratar_e_salvar_csv(input_path, output_path, fieldnames):
-    linhas, _ = carregar_dados_csv(input_path)
+def tratar_e_salvar_csv(input_path_relativo, output_path_relativo, fieldnames):
+    input_path = caminho_arquivo(input_path_relativo)
+    output_path = caminho_arquivo(output_path_relativo)
+
+    linhas, _ = carregar_dados_csv(input_path_relativo)
     linhas_filtradas = filter(linha_valida, linhas)
     linhas_tratadas = map(tratar_linha, linhas_filtradas)
 
@@ -26,7 +61,7 @@ def tratar_e_salvar_csv(input_path, output_path, fieldnames):
         for linha in linhas_tratadas:
             linha_limpa = limpar_none_keys(linha, fieldnames)
             writer.writerow(linha_limpa)
-
+'''
 
 # FUNÇÃO 1.2 - Tratamento (Limpa e trata linha do CSV)
 """
