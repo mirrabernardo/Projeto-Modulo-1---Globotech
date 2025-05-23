@@ -19,8 +19,7 @@ Não é necessário rodar `pip install` ou qualquer outro gerenciador de pacotes
 
 ## Estrutura do Repositório
 
-- `Scripts/`: Scripts Python (`main.py`, `funcoes.py`)
-- `Arquivos/`: Arquivos de dados de entrada e saída (CSV).
+- `Arquivos/`: Contem Scripts Python (`main.py`, `funcoes.py`) e rquivos de dados de entrada e saída (CSV).
 - `README.md`: Este arquivo de documentação.
 
 ## Solicitações do Projeto
