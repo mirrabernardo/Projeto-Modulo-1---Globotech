@@ -52,7 +52,7 @@ print('='*60)
 resultado3 = contar_tempo_total_de_visualizacao_por_conteudo(linhas_tratadas)
 for id_conteudo, info in resultado3.items():
     print(f"ID: {id_conteudo} | Nome: {info['nome']}")
-    print(f"  Tempo total de visualização (segundos): {info['watch_duration_seconds']}")
+    print(f"  Tempo total de visualização (minutos): {(info['watch_duration_seconds']/60):.2f}")
     print()  # Linha em branco entre conteúdos
 
 # Cálculo de Métricas 4 - Média de Tempo de Visualização por Conteúdo
@@ -61,7 +61,7 @@ print('MÉDIA DE TEMPO DE VISUALIZAÇÃO POR CONTEÚDO'.center(60))
 print('='*60)
 resultado4 = calcular_media_visualizacao_por_conteudo(conteudos)
 for id_conteudo, info in resultado4.items():
-    print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Média de tempo de visualização: {info['media_watch_duration']:.2f} segundos")
+    print(f"ID: {id_conteudo} | Nome: {info['nome_conteudo']} | Média de tempo de visualização: {(info['media_watch_duration']/60):.2f} minutos")
 
 
 # Cálculo de Métricas 5 - Total de Interações por Conteúdo (Listagem de Comentários por Conteúdo)
