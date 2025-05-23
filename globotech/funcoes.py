@@ -2,6 +2,11 @@ import csv
 import os
 from collections import defaultdict
 
+# ===================================
+# INICIALIZAÇÃO E CARREGAMENTO
+# ===================================
+
+# FUNÇÃO 0.1 - Gera um caminho para o arquivo para não haver problema na importação
 def caminho_arquivo(nome_arquivo):
     # Pasta onde está funcoes.py (ou seja, 'globotech')
     pasta_atual = os.path.dirname(os.path.abspath(__file__))
@@ -11,28 +16,7 @@ def caminho_arquivo(nome_arquivo):
     caminho = os.path.abspath(os.path.join(pasta_arquivos, nome_arquivo))
     return caminho
 
-def carregar_dados_csv(caminho_relativo):
-    caminho = caminho_arquivo(caminho_relativo)
-    with open(caminho, 'r', encoding='utf-8') as arquivo:
-        leitor = csv.DictReader(arquivo)
-        linhas = list(leitor)
-        fieldnames = leitor.fieldnames
-    return linhas, fieldnames
-
-def tratar_e_salvar_csv(input_path_relativo, output_path_relativo, fieldnames):
-    linhas, _ = carregar_dados_csv(input_path_relativo)
-    linhas_filtradas = filter(linha_valida, linhas)
-    linhas_tratadas = map(tratar_linha, linhas_filtradas)
-
-    caminho_saida = caminho_arquivo(output_path_relativo)
-    with open(caminho_saida, 'w', encoding='utf-8', newline='') as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for linha in linhas_tratadas:
-            linha_limpa = limpar_none_keys(linha, fieldnames)
-            writer.writerow(linha_limpa)
-'''
-# FUNÇÃO 0 -  Carregar CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
+# FUNÇÃO 0.2 -  Carregar CSV (Lê o CSV e retorna uma tupla: (lista de linhas como dicionários, lista de fieldnames)).
 def carregar_dados_csv(caminho_relativo):
     caminho = caminho_arquivo(caminho_relativo)
     with open(caminho, 'r', encoding='utf-8') as arquivo:
@@ -48,20 +32,17 @@ def carregar_dados_csv(caminho_relativo):
 
 # FUNÇÃO 1.1 - Tratar e salvar CSV (Carrega, trata e salva o CSV tratado)
 def tratar_e_salvar_csv(input_path_relativo, output_path_relativo, fieldnames):
-    input_path = caminho_arquivo(input_path_relativo)
-    output_path = caminho_arquivo(output_path_relativo)
-
     linhas, _ = carregar_dados_csv(input_path_relativo)
     linhas_filtradas = filter(linha_valida, linhas)
     linhas_tratadas = map(tratar_linha, linhas_filtradas)
 
-    with open(output_path, 'w', encoding='utf-8', newline='') as outfile:
+    caminho_saida = caminho_arquivo(output_path_relativo)
+    with open(caminho_saida, 'w', encoding='utf-8', newline='') as outfile:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
         for linha in linhas_tratadas:
             linha_limpa = limpar_none_keys(linha, fieldnames)
             writer.writerow(linha_limpa)
-'''
 
 # FUNÇÃO 1.2 - Tratamento (Limpa e trata linha do CSV)
 """
@@ -100,7 +81,6 @@ def tratar_linha(linha):
         del linha[None]
     return linha
 
-
 # FUNÇÃO 1.3 - Validação (Verifica se a linha é válida para processamento)
 """
 Uma linha é considerada válida se os campos 'plataforma' e 'tipo_interacao'
@@ -108,7 +88,6 @@ não estão vazios após a remoção de espaços extras.
 """
 def linha_valida(linha):
     return linha.get('plataforma', '').strip() != '' and linha.get('tipo_interacao', '').strip() != ''
-
 
 # FUNÇÃO 1.4 - Limpeza de chaves inválidas
 """
